@@ -1,0 +1,20 @@
+# AGENTS.md
+
+Flutter app: **<app name>** (personal project). Clean Architecture (`data → domain ← presentation`) with **Cubit-only** state management (`flutter_bloc`, no Bloc/events), `get_it` + `injectable` DI, `dartz` `Either<Failure, T>` error handling, `hive` local cache.
+
+Read before working in this repo:
+
+- [`docs/architecture.md`](docs/architecture.md) — stack, top-level layout, flavors, DI, Cubit state pattern, networking, error model. Read before adding a feature or touching cross-cutting code (`lib/common/`, `lib/utils/`).
+- [`docs/rules.md`](docs/rules.md) — naming conventions, layer rules, testing, and the definition-of-done checklist. Read before writing or reviewing any Dart code, and before implementing a Figma design (§13 covers Figma-MCP UI slicing).
+
+<!-- Delete this line once lib/ has real features: -->
+`lib/` is currently a fresh `flutter create` scaffold — the docs above describe the target shape to build toward, not existing code.
+
+## Commands
+
+```bash
+flutter analyze                                          # must be clean before finishing any change
+dart run build_runner build --delete-conflicting-outputs # after touching json_serializable/@HiveType/@injectable classes
+flutter test
+flutter run
+```
