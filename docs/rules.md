@@ -1,6 +1,6 @@
 # Rules
 
-> Coding conventions and working agreements for **harverst_moon_guide**.
+> Coding conventions and working agreements for **<app name>**.
 > Read this together with [`architecture.md`](./architecture.md) (structure).
 >
 > These rules describe the target conventions for this codebase. Follow them
@@ -33,17 +33,25 @@
 
 ## 2. Project structure rules
 
-- Features are organised across the three top-level folders
-  (`data/`, `domain/`, `presentation/screen/<feature>/`) per
-  [`architecture.md §4`](./architecture.md#4-feature-modules) — there is no
-  single `lib/features/<feature>/` folder.
+- Layout is **layer-first**: `lib/{common,data,domain,presentation,utils,gen}/`
+  per [`architecture.md §2`](./architecture.md#2-top-level-layout--layers-first-features-inside).
+  There is **no** `lib/features/<feature>/` folder and no
+  `lib/features/<feature>/{data,domain,presentation}` nesting.
+- A "feature" is a *name* repeated across the layers:
+  `data/datasources/remote/<feature>/`, `data/models/<feature>/`,
+  `data/repositories/<feature>_repository_impl.dart`,
+  `domain/entities/<feature>/`, `domain/repositories/<feature>/`,
+  `domain/usecase/<feature>/`, `presentation/screen/<feature>/`.
 - Cross-cutting infra goes in `lib/common/`; generic helpers/design tokens in
   `lib/utils/`.
-- Shared widgets go in `lib/presentation/widget/`; keep feature-specific
-  widgets inline in the screen file unless a second feature needs them.
-- Local datasources go under `data/datasources/local/<feature>/`, remote
-  ones under `data/datasources/remote/<feature>/` — don't nest one under
-  the other.
+- Shared widgets go in `lib/presentation/widget/`; screen-local widgets stay
+  inline in the feature's `presentation/screen/<feature>/`.
+- Folder names stay **singular** — `usecase/` (not `usecases/`),
+  `<feature>_datasource.dart` (not `<feature>_datasources.dart`).
+- Local datasources go under `data/datasources/local/<feature>/`, remote ones
+  under `data/datasources/remote/<feature>/` — don't nest one under the other.
+- Tests mirror the same tree under `test/` (`test/domain/usecase/<feature>/`,
+  `test/presentation/screen/<feature>/cubit/`, …).
 
 ---
 
@@ -256,3 +264,33 @@ component to implement:
 - Keep changes scoped to the task; avoid drive-by refactors.
 - Don't commit unless asked; stage specific files rather than `git add .`.
 - PR description: what changed, why, what was verified (analyze/build/manual).
+
+---
+
+## 15. Layout traps (read this before "fixing" the structure)
+
+These are the specific ways this layout has been broken before. All of them
+make the tree harder to read, none of them are improvements:
+
+- **Do not reintroduce `lib/features/`.** A layer-first tree is the point: all
+  repository contracts are in `domain/repositories/`, all usecases in
+  `domain/usecase/`, all screens in `presentation/screen/`. Folding a feature's
+  three layers into one folder means answering "what calls the network?" now
+  requires opening every feature folder.
+- **Do not leave re-export shim files.** A one-line
+  `export '../presentation/cubits/x_cubit.dart';` sitting in `domain/` is not
+  "backwards compatibility" — it is a cubit in the wrong layer with a decoy
+  path. If something moved, update the imports and delete the shim.
+- **Do not put a Cubit or `flutter_bloc` import in `domain/`.** Not in
+  `domain/`, not in `domain/usecase/`, not anywhere under `domain/`. State
+  management is presentation-only ([`architecture.md §6`](./architecture.md#6-state-management-cubit)).
+- **Do not put DTOs in `domain/`.** `*RemoteResponse` / `*LocalModel` live in
+  `data/models/`; `domain/entities/` holds the plain class the UI consumes,
+  produced by `toDomain()`.
+- **Do not create a parallel `lib/core/` next to `lib/common/`.** Cross-cutting
+  infra has one home (`lib/common/`) plus `lib/utils/` for design tokens and
+  helpers. Two folders holding the same four files is exactly the "berantakan"
+  this convention exists to prevent.
+- **Do not hand-roll DI registration** where an `@injectable` annotation would
+  do — hand-written `sl.register*` lines drift out of sync with the generated
+  `injection.config.dart`.

@@ -1,18 +1,34 @@
 # AGENTS.md
 
-Flutter app: **<app name>** (personal project). Clean Architecture (`data → domain ← presentation`) with **Cubit-only** state management (`flutter_bloc`, no Bloc/events), `get_it` + `injectable` DI, `dartz` `Either<Failure, T>` error handling, `hive` local cache.
+Flutter app: **<app name>** (personal project). Clean Architecture — **layer-first**:
+`lib/{common,data,domain,presentation,utils,gen}/`, with the feature name repeated
+*inside* each layer (`domain/usecase/<feature>/`, `data/repositories/<feature>_repository_impl.dart`,
+`presentation/screen/<feature>/`). **Cubit-only** state management (`flutter_bloc`, no
+Bloc/events), `get_it` + `injectable` DI, `dartz` `Either<Failure, T>` error handling,
+`dio` injected straight into datasources, `hive` local cache, `go_router` routing.
+
+There is deliberately **no `lib/features/<feature>/`** folder. See
+[`docs/rules.md`](docs/rules.md) §15 for the layout traps that broke this before.
 
 ## Workflow — run this FIRST (any project/task)
 
-Before writing any code, follow the **superpowers** workflow (obra/superpowers): **brainstorming** → **using-git-worktrees** → **writing-plans** → build with **test-driven-development** → **requesting-code-review** → **verification-before-completion**. Do NOT jump straight into code.
+Before writing any code, follow the **superpowers** workflow (obra/superpowers):
+**brainstorming** → **using-git-worktrees** → **writing-plans** → build with
+**test-driven-development** → **requesting-code-review** → **verification-before-completion**.
+Do NOT jump straight into code.
 
 Read before working in this repo:
 
-- [`docs/architecture.md`](docs/architecture.md) — stack, top-level layout, flavors, DI, Cubit state pattern, networking, error model. Read before adding a feature or touching cross-cutting code (`lib/common/`, `lib/utils/`).
-- [`docs/rules.md`](docs/rules.md) — naming conventions, layer rules, testing, and the definition-of-done checklist. Read before writing or reviewing any Dart code, and before implementing a Figma design (§13 covers Figma-MCP UI slicing).
+- [`docs/architecture.md`](docs/architecture.md) — stack, layer-first layout, flavors, feature
+  module shape, DI, Cubit state pattern, networking, error model, models, routing, testing.
+  Read before adding a feature or touching cross-cutting code (`lib/common/`, `lib/utils/`).
+- [`docs/rules.md`](docs/rules.md) — naming conventions, layer rules, layout traps, testing, and
+  the definition-of-done checklist. Read before writing or reviewing any Dart code, and before
+  implementing a Figma design (§13 covers Figma-MCP UI slicing).
 
 <!-- Delete this line once lib/ has real features: -->
-`lib/` is currently a fresh `flutter create` scaffold — the docs above describe the target shape to build toward, not existing code.
+`lib/` is currently a fresh `flutter create` scaffold — the docs above describe the target shape
+to build toward, not existing code.
 
 ## Commands
 
