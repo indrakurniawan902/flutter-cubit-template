@@ -78,8 +78,10 @@ lib/
 
   domain/                    # see §4
     entities/<feature>/      # plain Dart classes, no Equatable/freezed
+    models/<feature>/        # domain-level value objects (e.g. a tool-call request)
     repositories/<feature>/  # abstract interfaces
     usecase/<feature>/       # thin callable wrappers, one action each
+    tools/<feature>/         # domain tool contracts + security policy (registry, policy tiers)
 
   presentation/              # see §4
     navigation/
@@ -173,8 +175,10 @@ data/
 
 domain/
   entities/<feature>/<feature>_data.dart                  # plain Dart class
+  models/<feature>/                                       # domain value objects (no JSON)
   repositories/<feature>/<feature>_repository.dart        # abstract class
   usecase/<feature>/<verb>_<feature>_usecase.dart         # one action each
+  tools/<feature>/                                        # tool contracts + security policy
 
 presentation/
   screen/<feature>/
