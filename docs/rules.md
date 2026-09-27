@@ -243,7 +243,7 @@ When the user shares a Figma link (a `figma.com/...` URL) for a screen or
 component to implement:
 
 - **Use the Figma MCP, not the screenshot alone.** Load the
-  `figma-design-to-code` skill, then call `get_design_context` to pull real
+  `figma-pat-ui-slicing` skill, then call `get_design_context` to pull real
   layout, spacing, and token data before writing any widget code.
 - **Map tokens, don't hardcode them.** Translate the colors/text styles the
   MCP returns onto `AppColors` and `AppTextStyles` — never paste raw hex
